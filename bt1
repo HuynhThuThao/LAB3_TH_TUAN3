@@ -1,0 +1,220 @@
+package bt1;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Order {
+	private static int currentOrderID = 1;
+	private static Order currentOrder;
+	private int orderID;
+	private LocalDate orderDate;
+	private List<OrderDetail>lineItems;
+	private int count = 0;
+	
+	public Order() {		
+	}
+	
+	public Order (int orderID, LocalDate orderDate, int count) {
+		this.orderID = orderID;
+		this.orderDate = orderDate;
+		this.count = count;
+	}
+	public Order(int orderId, LocalDate orderDate, OrderDetail[] lineItems, int count) {
+		this.orderID = orderID;
+		this.orderDate = orderDate;
+		this.lineItems = new ArrayList<>(Arrays.asList(lineItems));
+		this.count = count;
+	}
+	public Order (LocalDate orderDate) {
+		if(currentOrder == null) {
+			currentOrder = this;
+			this.orderID = currentOrderID++;
+			this.orderDate = orderDate;
+			this.lineItems = new ArrayList<>();
+			this.count = ++count;
+		}else {
+			this.orderID = currentOrder.getOrderID();
+			this.orderDate = orderDate;
+			this.lineItems = currentOrder.getLineItems();
+			this.count = currentOrder.getCount();
+		}
+	}
+	public static int getCurrentOrderID() {
+		return currentOrderID;
+	}
+	public int getOrderID() {
+		return orderID;
+	}
+	public LocalDate getOrderDate() {
+		return orderDate;
+	}
+	public List<OrderDetail>  getLineItems() {
+		return lineItems;
+	}
+	public int getCount() {
+		return count;
+	}
+	public void setOrderDate(LocalDate orderDate) {
+		this.orderDate = orderDate;		
+	}
+	public void addLineItems(Product p,int quatity) {
+		if (currentOrder ==null) {
+			currentOrder = new Order(LocalDate.now());
+		}
+		lineItems.add(new OrderDetail (quatity,p));
+	}
+	public double calcTotalCharge() {
+		double totalCharge = 0;
+		for (OrderDetail s : lineItems) {
+			totalCharge += s.calcTotalPrice();
+		}
+		return totalCharge;
+	}
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Ma Order:").append(orderID).append("Ngay mua:").append(orderDate).append("\n");
+		sb.append(String.format("|%-15s|%-25s|%-15s|%-20s|%-10s|%-20s|%n","STT","MaSP","Mo ta","Don Gia","So luong","Thanh tien"));
+		for(int i =0;i<lineItems.size();i++) {
+			OrderDetail orderDetail =lineItems.get(i);
+			Product product = orderDetail.getProduct();
+			sb.append(String.format("|%-15s|%-25s|%-15s|%-20s|%-10s|%-20s|%n",i+1,product.getProductID(),product.getDescription(),product.getPrice(),orderDetail.getQuatity(),orderDetail.calcTotalPrice()));	
+		}
+		sb.append("Tong thanh toan la:").append(calcTotalCharge());
+		return sb.toString();
+	}
+
+}
+package bt1;
+
+public class OrderDetail {
+	private int quatity;
+	private Product product;
+	
+	public OrderDetail(int quatity,Product product) {
+		this.quatity = quatity;
+		this.product = product;
+	}
+	public OrderDetail() {
+		
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product=product;
+	}
+	public int getQuatity() {
+		return quatity;
+	}
+	public void setQuatity(int quatity) {
+		this.quatity=quatity;
+	}
+	public double calcTotalPrice() {
+		double thanhtien;
+		thanhtien = quatity*product.getPrice();
+		return thanhtien;
+	}
+	@Override
+	public String toString() {
+		return "Ma SP:" + product.getProductID() + ",Mo ta:" + product.getDescription() + ",Don gia:" + product.getPrice() + ",So luong:" + quatity + ",Thanh tien:" + calcTotalPrice();
+	}
+
+}
+package bt1;
+
+public class Product {
+	private String description, productID;
+	private double price;
+	
+	public Product() {
+	}
+	public Product (String description, String productID, double price) {
+		this.description = description;
+		this.productID = productID;
+		this.price = price;		
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getProductID() {
+		return productID;
+	}
+	public void setProductID(String productID) {
+		this.productID = productID;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	@Override
+	public String toString() {
+		return " Product{"+"description='"+ description + '\''+",productID='"+ productID +'\''+",price="+ price +'}';
+	}
+}
+package bt1;
+
+import java.time.LocalDate;
+import java.util.Scanner;
+
+public class main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub		
+		        Scanner sc = new Scanner(System.in); 
+		        Order currentOrder = null;
+		        int menu;
+		        do{
+		            System.out.println("1. Nhap:");
+		            System.out.println("2. In ra man hinh:");
+		            System.out.println("0.Thoat:");
+		            menu = sc.nextInt();
+		            switch(menu){
+		                case 1:
+		                    sc.nextLine();
+		                    System.out.println("Nhap Ma SP:");
+		                    String productID = sc.nextLine();
+		                    
+		                    System.out.println("Nhap mo ta:");
+		                    String description = sc.nextLine();
+		                    
+		                    System.out.println("Nhap don gia:");
+		                    double price = sc.nextDouble();
+		                    
+		                    System.out.println("Nhap so luong:");
+		                    int quality = sc.nextInt();
+		                    Product p = new Product(description, productID, price);
+		                    if (currentOrder == null){
+		                        currentOrder = new Order(LocalDate.now());
+		                    }
+		                    
+		                currentOrder.addLineItems(p, quality);
+		                System.out.println("Nhap thanh cong:");
+		                break;
+		                case 2:
+		                    if (currentOrder != null){
+		                        System.out.println(currentOrder.toString());
+		                        currentOrder = null;
+		                    } else{
+		                        System.out.println("Hien tai khong co hang:");   
+		                    }
+		                    break;
+		                default:
+		                    if (menu == 0 ){
+		                        System.out.println("Thoat ");
+		                    } else {
+		                        System.out.println("Vui long nhap lai lan nua");
+		                    }
+		                if (currentOrder != null){
+		                    currentOrder = new Order(LocalDate.now());
+		                }
+		            }
+		        }while(menu != 0);
+		   }
+	}
