@@ -1,0 +1,202 @@
+package bt3;
+
+public class SinhVien {
+	private String masv;
+	private String hoten;
+	private int namsinh;
+	public SinhVien(String masv, String hoten, int namsinh) {
+		super();
+		this.masv = masv;
+		this.hoten = hoten;
+		this.namsinh = namsinh;
+	}
+	public String getmasv() {
+		return masv;
+	}
+	public void setmasv(String masv) {
+		this.masv = masv;
+	}
+	public String gethoten() {
+		return hoten;
+	}
+	public void sethoten(String hoten) {
+		this.hoten = hoten;
+	}
+	public int getnamsinh() {
+		return namsinh;
+	}
+	public void setnamsinh(int namsinh) {
+		this.namsinh = namsinh;
+	}
+	@Override
+	public String toString() {
+		return "SinhVien [masv=" + masv + ", hoten=" + hoten + ", namsinh=" + namsinh + "]";
+	}
+	
+	
+}
+package bt3;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+
+public class QLSV {
+	private ArrayList<SinhVien> SinhVienList;
+	public QLSV() {
+		SinhVienList =new ArrayList<>();
+	}
+	public ArrayList<SinhVien> getSinhVienList() {
+		return SinhVienList;
+	}
+	public void setSinhVienList(ArrayList<SinhVien> SinhVienList) {
+		this.SinhVienList = SinhVienList;
+	}
+	public void addSinhVien(SinhVien sv) {
+		SinhVienList.add(sv);
+	}
+	public void xoaSinhVien( String masv) {
+		for (int i=0; i<SinhVienList.size();i++) {
+			SinhVien sv= SinhVienList.get(i);
+			if(sv.getmasv().equals(masv)) {
+				SinhVienList.remove(i);
+				break;
+			}
+		}
+	}
+	public void capNhatSinhVien(String masv, String hoten, int namsinh) {
+		for (SinhVien sv : SinhVienList) {
+			if (sv.getmasv().equals(masv)) {
+				sv.sethoten(hoten);
+				sv.setnamsinh(namsinh);
+				break;
+			}
+		}
+	}
+	public SinhVien timtheoma(String masv) {
+		for (SinhVien sv : SinhVienList) {
+			if(sv.getmasv().equals(masv)){
+				return sv;
+			}
+		}
+		return null;
+	}
+	public SinhVien timtheoten(String hoten) {
+		for (SinhVien sv :SinhVienList) {
+			if(sv.gethoten().equals(hoten)){
+				return sv;
+			}
+		}
+		return null;
+	}
+	public void xuatdanhsach() {
+		for (SinhVien sv : SinhVienList) {
+			System.out.println(sv);
+		}
+	}
+	public void sapxepboiID() {
+		Collections.sort(SinhVienList, new Comparator<SinhVien>() {
+			@Override
+			public int compare (SinhVien sv1, SinhVien sv2) {
+				return sv1.getmasv().compareTo(sv2.getmasv());
+			}
+		});
+	}
+}
+package bt3;
+
+import java.util.Scanner;
+
+public class main3 {
+	public static void main(String[] args) {
+		QLSV qlsv=new QLSV();
+		Scanner input=new Scanner(System.in);
+		int chon;
+		
+		qlsv.addSinhVien(new SinhVien("001","Nguyen Van A",2003));
+		qlsv.addSinhVien(new SinhVien("002","Tran Ngoc B",2003));
+		qlsv.addSinhVien(new SinhVien("003","Nguyen Ngoc C",2003));
+		qlsv.addSinhVien(new SinhVien("004","Lam Van G",2003));
+		qlsv.addSinhVien(new SinhVien("005","Huynh Thanh E",2003));
+		
+		do {
+			System.out.println("MeNu");
+			System.out.println("1. Lay danh sach sinh vien");
+			System.out.println("2. Them Sinh Vien");
+			System.out.println("3. Xoa sinh vien ");
+			System.out.println("4. Sua thong tin");
+			System.out.println("5. Tim Sinh Vien theo ma");
+			System.out.println("6. Tim sinh vien theo ten");
+			System.out.println("7. Sap xep danh sach sinh vien");
+			System.out.println("0. Thoat");
+			System.out.println("Nhap lua chon: ");
+			chon=input.nextInt();
+			input.nextLine();
+			switch(chon) {
+			case 1: 
+				System.out.println("Danh sach sinh vien");
+				qlsv.xuatdanhsach();
+				break;
+			case 2:
+				System.out.println("Nhap ma sinh vien ");
+				String ID= input.nextLine();
+				System.out.println("Nhap ho ten sinh vat: ");
+				String Name= input.nextLine();
+				System.out.println("Nhap nam sinh vien: ");
+				int birthDay= input.nextInt();
+				input.nextLine();
+				SinhVien s1=new SinhVien(ID,Name,birthDay);
+				qlsv.addSinhVien(s1);
+				break;
+			case 3:
+				System.out.println(" Nhap ma sinh vien can xoa:");
+				String Idxoa=input.nextLine();
+				qlsv.xoaSinhVien(Idxoa);
+				System.out.println("Sinh vien da duoc xoa");
+				break;
+			case 4:
+				System.out.println("Nhap ma sinh vien can sua: ");
+				String idsua=input.nextLine();
+				System.out.println("Nhap ho ten sinh vien moi: ");
+				String NameSua= input.nextLine();
+				System.out.println("Nhap nam sinh moi: ");
+				int birthDaySua= input.nextInt();
+				input.nextLine();
+				
+				qlsv.capNhatSinhVien(idsua, NameSua, birthDaySua);
+				break;
+			case 5: 
+				System.out.println("nhap ma sinh vien can tim");
+				String idfind=input.nextLine();
+				SinhVien timSinhVienID=qlsv.timtheoma(idfind);
+				if (timSinhVienID!=null) {
+					System.out.println("Sinh vien duoc tim thay: ");
+					System.out.println(timSinhVienID);
+				}else {
+					System.out.println("Khong tim thay sinh vien");
+				}
+				break;
+			case 6:
+				System.out.println("nhap ten sinh vien can tim");
+				String Namefind=input.nextLine();
+				SinhVien timSinhVienName=qlsv.timtheoma(Namefind);
+				if (timSinhVienName!=null) {
+					System.out.println("Sinh vien duoc tim thay: ");
+					System.out.println(timSinhVienName);
+				}else {
+					System.out.println("Khong tim thay sinh vien");
+				}
+				break;
+			case 7:
+				qlsv.sapxepboiID();
+				System.out.println("Danh sach sinh vien da sap xep: ");
+				break;
+			case 0: 
+				System.out.println("Da thoat chuong trinh");
+			}
+
+			
+		}while (chon !=0);
+	}
+}
